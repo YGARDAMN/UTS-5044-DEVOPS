@@ -1,4 +1,4 @@
-name: Simple Docker Workflow
+name: Docker CI/CD
 
 on:
   push:
@@ -16,4 +16,15 @@ jobs:
         run: docker build -t my-app .
 
       - name: Run Docker container
-        run: docker run -d my-app
+        run: docker run -d -p 3000:3000 my-app
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-run
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Simulate deployment step
+        run: echo "Deploying application..."
