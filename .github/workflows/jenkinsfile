@@ -1,0 +1,50 @@
+pipeline {
+  agent any
+
+  environment {
+    DEPLOY_ENV = 'staging'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        // Ambil kode dari GitHub
+        git branch: 'development', url: 'https://github.com/YGARDAMN/UTS-5044-DEVOPS.git'
+      }
+    }
+
+    stage('Install Dependencies') {
+      steps {
+        // Sesuaikan dengan jenis aplikasi
+        sh 'npm install'          // Untuk Node.js
+        // sh 'pip install -r requirements.txt' // Untuk Python
+      }
+    }
+
+    stage('Run Tests') {
+      steps {
+        sh 'npm test'             // atau pytest
+      }
+    }
+
+    stage('Deploy to Staging') {
+      when {
+        branch 'development'
+      }
+      steps {
+        echo "Deploying to ${env.DEPLOY_ENV}..."
+        // Perintah deploy kamu di sini
+        // Contoh: sh './deploy-to-heroku.sh'
+      }
+    }
+  }
+
+  post {
+    success {
+      echo 'Pipeline sukses ✅'
+    }
+    failure {
+      echo 'Pipeline gagal ❌'
+    }
+  }
+}
